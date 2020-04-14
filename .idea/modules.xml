@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/agreement/agreement.iml" filepath="$PROJECT_DIR$/agreement/agreement.iml" />
       <module fileurl="file://$PROJECT_DIR$/nio/nio.iml" filepath="$PROJECT_DIR$/nio/nio.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/study.iml" filepath="$PROJECT_DIR$/.idea/study.iml" />
       <module fileurl="file://$PROJECT_DIR$/studynetty/studynetty.iml" filepath="$PROJECT_DIR$/studynetty/studynetty.iml" />
