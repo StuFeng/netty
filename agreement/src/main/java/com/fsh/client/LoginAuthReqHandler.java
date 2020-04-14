@@ -1,4 +1,4 @@
-package com.fsh.handle;
+package com.fsh.client;
 
 import com.fsh.bean.Header;
 import com.fsh.bean.NettyMessage;
@@ -39,15 +39,13 @@ public class LoginAuthReqHandle extends ChannelHandlerAdapter {
                 System.out.println("Login is ok :" + message);
                 ctx.fireChannelRead(msg);
             }
-
-
         } else {
             ctx.fireChannelRead(msg);
         }
     }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
+            throws Exception {
         ctx.fireExceptionCaught(cause);
     }
 }

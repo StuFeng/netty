@@ -1,4 +1,4 @@
-package com.fsh.handle;
+package com.fsh.server;
 
 import com.fsh.bean.Header;
 import com.fsh.bean.NettyMessage;
@@ -61,7 +61,8 @@ public class LoginAuthRespHandle extends ChannelHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        nodeCheck.remove(ctx.channel().remoteAddress().toString());
+        cause.printStackTrace();
+        nodeCheck.remove(ctx.channel().remoteAddress().toString());// 删除缓存
         ctx.close();
         ctx.fireExceptionCaught(cause);
     }

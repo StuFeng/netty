@@ -1,4 +1,4 @@
-package com.fsh.handle;
+package com.fsh.client;
 
 import com.fsh.bean.Header;
 import com.fsh.bean.NettyMessage;
@@ -6,6 +6,7 @@ import com.fsh.common.MessageType;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -15,12 +16,14 @@ import java.util.concurrent.TimeUnit;
  **/
 public class HeartBeatReqHandle extends ChannelHandlerAdapter {
 
+    private volatile ScheduledFuture<?> heartBeat;
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         NettyMessage message = (NettyMessage) msg;
         // 握手成功主动发起心跳消息
         if (message.getHeader() != null && message.getHeader().getType() == MessageType.LOGIN_RESP) {
-            ctx.executor().scheduleAtFixedRate(new HeartBeatTask(ctx), 0, 5000, TimeUnit.MILLISECONDS);
+            heartBeat = ctx.executor().scheduleAtFixedRate(new HeartBeatTask(ctx), 0, 5000, TimeUnit.MILLISECONDS);
         } else if (message.getHeader() != null && message.getHeader().getType() == MessageType.HEARTBEAT_RESP) {
             System.out.println("client receive server heart beat message : ---> " + message);
         } else {
@@ -50,6 +53,16 @@ public class HeartBeatReqHandle extends ChannelHandlerAdapter {
             message.setHeader(header);
             return message;
         }
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
+        if (heartBeat != null) {
+            heartBeat.cancel(true);
+            heartBeat = null;
+        }
+        ctx.fireExceptionCaught(cause);
     }
 
 }

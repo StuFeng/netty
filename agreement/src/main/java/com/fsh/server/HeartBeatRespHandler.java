@@ -1,12 +1,10 @@
-package com.fsh.handle;
+package com.fsh.server;
 
 import com.fsh.bean.Header;
 import com.fsh.bean.NettyMessage;
 import com.fsh.common.MessageType;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author fengsihan

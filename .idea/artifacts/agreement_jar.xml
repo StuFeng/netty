@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="agreement:jar">
+    <output-path>$PROJECT_DIR$/nio/out/artifacts/agreement_jar</output-path>
+    <root id="archive" name="agreement.jar">
+      <element id="module-output" name="agreement" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jboss/marshalling/jboss-marshalling/2.0.9.Final/jboss-marshalling-2.0.9.Final.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jboss/marshalling/jboss-marshalling-serial/2.0.9.Final/jboss-marshalling-serial-2.0.9.Final.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/netty/netty-all/5.0.0.Alpha1/netty-all-5.0.0.Alpha1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
