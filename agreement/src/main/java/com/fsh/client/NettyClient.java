@@ -2,8 +2,7 @@ package com.fsh.client;
 
 import com.fsh.coder.NettyMessageDecoder;
 import com.fsh.coder.NettyMessageEncoder;
-import com.fsh.handle.HeartBeatReqHandle;
-import com.fsh.handle.LoginAuthReqHandle;
+import com.fsh.common.NettyConstant;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -37,25 +36,41 @@ public class NettyClient {
                     .option(ChannelOption.TCP_NODELAY, true)
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
-                        protected void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new NettyMessageDecoder(1024 * 1024, 4, 4));
-                            ch.pipeline().addLast("MessageEncoder", new NettyMessageEncoder());
-                            ch.pipeline().addLast("readTimeoutHandler", new ReadTimeoutHandler(50));
-                            ch.pipeline().addLast("LoginAuthHandler", new LoginAuthReqHandle());
-                            ch.pipeline().addLast("HeartBeatHandler", new HeartBeatReqHandle());
+                        public void initChannel(SocketChannel ch)
+                                throws Exception {
+                            ch.pipeline().addLast(
+                                    new NettyMessageDecoder(1024 * 1024, 4, 4));
+                            ch.pipeline().addLast("MessageEncoder",
+                                    new NettyMessageEncoder());
+                            ch.pipeline().addLast("readTimeoutHandler",
+                                    new ReadTimeoutHandler(50));
+                            ch.pipeline().addLast("LoginAuthHandler",
+                                    new LoginAuthReqHandler());
+                            ch.pipeline().addLast("HeartBeatHandler",
+                                    new HeartBeatReqHandler());
                         }
                     });
 
-            ChannelFuture future = b.connect(new InetSocketAddress(host, port), new InetSocketAddress("127.0.0.1", 8080))
-                    .sync();
+            ChannelFuture future = b.connect(
+                    new InetSocketAddress(host, port),
+                    new InetSocketAddress(NettyConstant.LOCALIP,
+                            NettyConstant.LOCAL_PORT)).sync();
             future.channel().closeFuture().sync();
         } finally {
-            executorService.execute(() -> {
-                try {
-                    TimeUnit.SECONDS.sleep(5);
-                    connect(port, host);// 重连
-                } catch (Exception e) {
-                    e.printStackTrace();
+//            // 所有资源释放完成之后，清空资源，再次发起重连操作
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                        try {
+                            connect(NettyConstant.PORT, NettyConstant.REMOTEIP);// 发起重连操作
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }
@@ -63,7 +78,7 @@ public class NettyClient {
     }
 
     public static void main(String[] args) throws Exception {
-        new NettyClient().connect(8081, "127.0.0.1");
+        new NettyClient().connect(NettyConstant.PORT, NettyConstant.REMOTEIP);;
     }
 
 }

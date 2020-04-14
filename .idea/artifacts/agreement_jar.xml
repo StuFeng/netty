@@ -2,6 +2,9 @@
   <artifact type="jar" name="agreement:jar">
     <output-path>$PROJECT_DIR$/nio/out/artifacts/agreement_jar</output-path>
     <root id="archive" name="agreement.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/studynetty/src/main/java/META-INF/MANIFEST.MF" />
+      </element>
       <element id="module-output" name="agreement" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jboss/marshalling/jboss-marshalling/2.0.9.Final/jboss-marshalling-2.0.9.Final.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jboss/marshalling/jboss-marshalling-serial/2.0.9.Final/jboss-marshalling-serial-2.0.9.Final.jar" path-in-jar="/" />

@@ -1,11 +1,9 @@
-package com.fsh.client;
+package com.fsh.server;
 
 import com.fsh.coder.NettyMessageDecoder;
 import com.fsh.coder.NettyMessageEncoder;
-import com.fsh.handle.HeartBeatRespHandle;
-import com.fsh.handle.LoginAuthRespHandle;
+import com.fsh.common.NettyConstant;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -27,8 +25,8 @@ public class NettyServer {
         NioEventLoopGroup bossGroup = new NioEventLoopGroup();
         NioEventLoopGroup workerGroup = new NioEventLoopGroup();
         // 用于启动nio服务端的辅助启动类
-        ServerBootstrap serverBootstrap = new ServerBootstrap();
-        serverBootstrap.group(bossGroup, workerGroup)
+        ServerBootstrap b = new ServerBootstrap();
+        b.group(bossGroup, workerGroup)
                 // 对应jdk nio服务端的ServerSocketChannel
                 .channel(NioServerSocketChannel.class)
                 .option(ChannelOption.SO_BACKLOG, 100)
@@ -38,17 +36,16 @@ public class NettyServer {
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ch.pipeline().addLast(new NettyMessageDecoder(1024 * 1024, 4, 4));
                         ch.pipeline().addLast(new NettyMessageEncoder());
-                        ch.pipeline().addLast("readTimeoutHandler", new ReadTimeoutHandler(100));
-                        ch.pipeline().addLast(new HeartBeatRespHandle());
-                        ch.pipeline().addLast(new LoginAuthRespHandle());
+                        ch.pipeline().addLast("readTimeoutHandler", new ReadTimeoutHandler(50));
+                        ch.pipeline().addLast(new LoginAuthRespHandler());
+                        ch.pipeline().addLast("HeartBeatHandler",
+                                new HeartBeatRespHandler());
                     }
                 });
 
         // 绑定端口，同步等待成功
-        ChannelFuture feture = serverBootstrap.bind("127.0.0.1", 18081).sync();
+        b.bind(NettyConstant.REMOTEIP, NettyConstant.PORT).sync();
         System.out.println("Netty server start ok : 127.0.0.1:" + 18081);
-
-        feture.channel().closeFuture().sync();
     }
 
     public static void main(String[] args) throws Exception {
